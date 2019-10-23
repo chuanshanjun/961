@@ -395,7 +395,8 @@ boolean isEmpty();
 可以将森林(Forests)定义为可以通过删除根节点并将根节点连接到第一级节点的边缘来获得的不相交树的集合。
 ![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/forest.png)
 
-### 树的前序,中序,后序,层次序遍历(下面的用例基于二分搜索树);
+### 树的前序,中序,后序,层次序遍历
+
 
 
 
