@@ -396,7 +396,92 @@ boolean isEmpty();
 ![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/forest.png)
 
 ### 树的前序,中序,后序,层次序遍历
+#### 前序遍历
+**定义: 访问这个节点在访问这个节点的左右子树之前：所以称为前序遍历**
 
+如果二叉树为空树，则什么都不做，否则：
 
+1）访问根节点
 
+2）前序遍历左子树
 
+3）前序遍历右子树
+```java
+// 二分搜索树的前序遍历
+    public void preOrder(){
+        preOrder(root);
+    }    
+// 前序遍历以node为根的二分搜索树, 递归算法
+    private void preOrder(Node node){
+        if(node == null)
+            return;
+
+        System.out.println(node.e);
+        preOrder(node.left);
+        preOrder(node.right);
+    }
+```
+#### 中序遍历
+**定义: 访问这个节点在访问这个节点的左右子树之中：所以称为中序遍历**
+
+**特殊意义:二分搜索树的中序遍历的结果是顺序的**
+
+如果二叉树为空，则什么都不做，否则:
+
+1) 中序遍历左子树
+
+2) 访问根节点
+
+3) 中序遍历右子树
+```java
+// 二分搜索树的中序遍历
+    public void inOrder(){
+        inOrder(root);
+    }
+
+    // 中序遍历以node为根的二分搜索树, 递归算法
+    private void inOrder(Node node){
+        if(node == null)
+            return;
+
+        inOrder(node.left);
+        System.out.println(node.e);
+        inOrder(node.right);
+    }
+```
+#### 后序遍历
+**定义: 访问这个节点在访问这个节点的左右子树之后：所以称为后序遍历**
+
+如果二叉树为空，则什么都不做，否则:
+
+1) 后序遍历左子树
+
+2) 访问根节点
+
+3) 后序遍历右子树
+```java
+// 二分搜索树的后序遍历
+    public void postOrder(){
+        postOrder(root);
+    }
+
+    // 后序遍历以node为根的二分搜索树, 递归算法
+    private void postOrder(Node node){
+        if(node == null)
+            return;
+
+        postOrder(node.left);
+        postOrder(node.right);
+        System.out.println(node.e);
+    }
+```
+### 层次遍历
+**定义：层序遍历的话又称为广度优先,通常不用递归，而且还需要借助额外的数据结构，队列。**
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/bstls1.png)
+
+如图所示为二叉树的层次遍历:
+
+* 1 即按照箭头所示方向，按照0，1，2的层次顺序对二叉树中的各个结点访问。
+* 2 要进行层次遍历需要建立一个队列，先将二叉树头结点入队列，然后出队列。
+* 3 访问该结点，如果他有左子树，则将左子树的根节点入队，如果他有右子树，则将右子树的根节点入队，然后出队列。 
+* 4 对出对结点访问，如此反复，直到队列为空为止。
