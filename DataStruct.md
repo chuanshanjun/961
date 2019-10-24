@@ -485,3 +485,24 @@ boolean isEmpty();
 * 2 要进行层次遍历需要建立一个队列，先将二叉树头结点入队列，然后出队列。
 * 3 访问该结点，如果他有左子树，则将左子树的根节点入队，如果他有右子树，则将右子树的根节点入队，然后出队列。 
 * 4 对出对结点访问，如此反复，直到队列为空为止。
+
+```java
+// 二分搜索树的层序遍历
+    public void levelOrder(){
+
+        if(root == null)
+            return;
+
+        Queue<Node> q = new LinkedList<>();
+        q.add(root);
+        while(!q.isEmpty()){
+            Node cur = q.remove();
+            System.out.println(cur.e);
+
+            if(cur.left != null)
+                q.add(cur.left);
+            if(cur.right != null)
+                q.add(cur.right);
+        }
+    }
+```
