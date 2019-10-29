@@ -396,8 +396,11 @@ boolean isEmpty();
 ![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/forest.png)
 
 ### 树的前序,中序,后序,层次序遍历
+**树的前、中、后序遍历，都是先"一路到底"，所以我们称为深度优先**
 #### 前序遍历
 **定义: 访问这个节点在访问这个节点的左右子树之前：所以称为前序遍历**
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/bstpreorderr.png)
 
 如果二叉树为空树，则什么都不做，否则：
 
@@ -421,10 +424,13 @@ boolean isEmpty();
         preOrder(node.right);
     }
 ```
+
 #### 中序遍历
 **定义: 访问这个节点在访问这个节点的左右子树之中：所以称为中序遍历**
 
 **特殊意义:二分搜索树的中序遍历的结果是顺序的**
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/bstinorderr.png)
 
 如果二叉树为空，则什么都不做，否则:
 
@@ -449,8 +455,11 @@ boolean isEmpty();
         inOrder(node.right);
     }
 ```
+
 #### 后序遍历
 **定义: 访问这个节点在访问这个节点的左右子树之后：所以称为后序遍历**
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/bstpostorderr.png)
 
 如果二叉树为空，则什么都不做，否则:
 
@@ -475,8 +484,10 @@ boolean isEmpty();
         System.out.println(node.e);
     }
 ```
+
 ### 层次遍历
 **定义：层序遍历的话又称为广度优先,通常不用递归，而且还需要借助额外的数据结构，队列。**
+
 ![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/bstls1.png)
 
 如图所示为二叉树的层次遍历:
@@ -506,3 +517,130 @@ boolean isEmpty();
         }
     }
 ```
+
+### 深度优先广度优先差异
+**广度优先遍历:**
+* 1 更快的找到你所要的那个元素
+* 2 常用于算法设计中-最短路径
+* 3 图中的深度优先与广度优先遍历
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/whorder.png)
+
+例: 当问题发生在 2层 右子树上 如果使用深度优先的话 程序会一股脑的先将所有的左子树遍历一遍，达到真正问题发生处可能需要很多时间，但如果使用广度优先那么就只要遍历几层就可以找到了。
+
+### 二叉树前序遍历的非递归写法
+#### 前序-非递归
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/bstpreorder.png)
+
+* 1 判断节点是否为空，为空则返回
+* 2 新建一个栈
+* 3 根节点入栈
+* 4 根节点出栈，将其右节点与左节点入展，因为栈是先进后出的，所以入栈先入右节点
+* 5 刚才压入的左节点出栈，再压入其右节点与左节点
+* 6 循环上面的步骤...
+
+```java
+    // 二分搜索树的非递归前序遍历
+    public void preOrderNR(){
+
+        if(root == null)
+            return;
+
+        Stack<Node> stack = new Stack<>();
+        stack.push(root);
+        while(!stack.isEmpty()){
+            Node cur = stack.pop();
+            System.out.println(cur.e);
+
+            if(cur.right != null)
+                stack.push(cur.right);
+            if(cur.left != null)
+                stack.push(cur.left);
+        }
+    }
+```
+#### 中、后序-非递归实现（略）
+#### 前、中、后序的递归与非递归实现差别
+* 1 非递归需要额外的数据结构**栈**才能实现
+* 2 非递归实现比递归实现复杂
+* 3 中、后序非递归实现更复杂，实际应用不广
+
+### 二叉树及其性质
+二叉树的定义
+* 1 每个结点最多只有2颗子树，即二叉树中节点的度只能为0，1，2
+* 2 子树有左右顺序之分，不能颠倒。
+
+&emsp;**性质1**
+
+&emsp;非空二叉树上叶子结点数等于双分支结点数加1(没理解)
+
+&emsp;**性质2**
+
+&emsp;二叉树的第i层上最多有2^(i －1)个结点。(i>=1)
+
+&emsp;**性质3**
+
+&emsp;高度或深度为k的二叉树最多有2(k次)−1个结点。换句话说，满二叉树中**前k层的结点个数(前k层的总数)**为2^(k-1)
+
+&emsp;**性质4**
+
+&emsp;如果对一棵有n个结点的完全二叉树的结点按层序编号（从第一层到最后一层，每层从左到右），对任一结点i（1<=i<=n）有：
+
+&emsp;1 如果i=1，则结点i是二叉树的根，无双亲；如果i>1，则其双亲是结点 ⌊ i/2 ⌋ 。
+
+&emsp;2 如果2i>n，则结点i无左孩子（结点i为叶子结点）；否则其左孩子是结点2i 。
+
+&emsp;3 如果2i+1>n，则结点i无右孩子；否则其右孩子是结点2i+1 。
+
+&emsp;**性质5**
+
+&emsp;具有n个结点的完全二叉树的深度为不大于log2n的最大整数+1 
+
+&emsp;具有n(n>0)个结点的完全二叉树的高度为log2n
+
+### 普通树与二叉树的转换(考点只写了这个-普通树与二叉树的转换)
+
+#### 树转换成二叉树
+
+树转换成二叉树的过程如下
+
+1）将同一结点的各孩子结点用线串起来
+
+2）将每个结点的分支从左到右除了第一个外，其余的都剪掉，整理即可得到
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/ordinarytreeconbt.jpg)
+
+### 二叉树转换成树
+
+二叉树转换为树是树转换为二叉树的逆过程，其步骤是：
+
+1）若某结点的左孩子结点存在，将左孩子结点的右孩子结点、右孩子结点的右孩子结点……都作为该结点的孩子结点，将该结点与这些右孩子结点用线连接起来；
+
+2）删除原二叉树中所有结点与其右孩子结点的连线；
+
+3）整理（1）和（2）两步得到的树，使之结构层次分明。
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/btreeconverttree.jpg)
+
+### 森林转换成二叉树
+
+森林是由若干棵树组成，可以将森林中的每棵树的根结点看作是兄弟，由于每棵树都可以转换为二叉树，所以森林也可以转换为二叉树。
+
+将森林转换为二叉树的步骤是：
+
+1）先把每棵树转换为二叉树；
+
+2）第一棵二叉树不动，从第二棵二叉树开始，**依次把后一棵二叉树的根结点作为前一棵二叉树的根结点的右孩子结点，用线连接起来**。当所有的二叉树连接起来后得到的二叉树就是由森林转换得到的二叉树。
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/forest2btree.jpg)
+
+### 二叉树转换成森林
+
+二叉树转换为森林比较简单，其步骤如下：
+
+1）先把每个结点与右孩子结点的连线删除，得到分离的二叉树；
+
+2）把分离后的每棵二叉树转换为树；
+
+3）整理第（2）步得到的树，使之规范，这样得到森林。
