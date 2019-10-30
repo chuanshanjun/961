@@ -644,3 +644,29 @@ boolean isEmpty();
 2）把分离后的每棵二叉树转换为树；
 
 3）整理第（2）步得到的树，使之规范，这样得到森林。
+
+### 树的存储结构,标准形式
+
+#### 顺序存储结构
+
+树的顺序存储结构最简单直观的是**双亲存储结构**，用一维数组即可实现。将所有结点存到一个数组中。每个结点都有一个**数据域data**和一个**数值parent**指示其双亲在数组中存放的位置。根结点由于没有父结点，parent用-1表示。
+int tree[maxSize]
+
+树的双亲存储结构在**克鲁斯卡尔算法**中有重要应用
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/treestore.jpg)
+
+#### 链式存储结构
+
+&emsp;1 孩子存储结构
+
+&emsp;孩子存储结构实质上就是图的邻接表存储结构
+
+&emsp;树就是一种特殊的图，把图中的多对多关系删减成一对多关系即可的得到树
+
+&emsp;2 孩子兄弟存储结构
+&emsp; 树转换成二叉树的过程**就是变成了孩子兄弟存储结构**
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/treestore1.jpg)
+
+
