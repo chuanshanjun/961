@@ -395,6 +395,8 @@ boolean isEmpty();
 可以将森林(Forests)定义为可以通过删除根节点并将根节点连接到第一级节点的边缘来获得的不相交树的集合。
 ![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/forest.png)
 
+**满二叉树:对整个二叉树而言除了叶子节点外，都有两个孩子节点**
+
 ### 树的前序,中序,后序,层次序遍历
 **树的前、中、后序遍历，都是先"一路到底"，所以我们称为深度优先**
 #### 前序遍历
@@ -647,6 +649,10 @@ boolean isEmpty();
 
 ### 树的存储结构,标准形式
 
+**满二叉树与完全二叉树的区别**
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/treediff.png)
+
 #### 顺序存储结构
 
 树的顺序存储结构最简单直观的是**双亲存储结构**，用一维数组即可实现。将所有结点存到一个数组中。每个结点都有一个**数据域data**和一个**数值parent**指示其双亲在数组中存放的位置。根结点由于没有父结点，parent用-1表示。
@@ -654,7 +660,7 @@ int tree[maxSize]
 
 树的双亲存储结构在**克鲁斯卡尔算法**中有重要应用
 
-![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/treestore.jpg)
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/treestore.png)
 
 #### 链式存储结构
 
@@ -667,6 +673,287 @@ int tree[maxSize]
 &emsp;2 孩子兄弟存储结构
 &emsp; 树转换成二叉树的过程**就是变成了孩子兄弟存储结构**
 
-![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/treestore1.jpg)
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/treestore1.png)
+
+**完全树(complete tree)的数组形式存储**
+顺序存储结构最适合于**完全二叉树，用户存储一般二叉树会浪费大量的存储空间**
+20版天勤 P137
+
+### 树的应用
+二叉排序树和平衡二叉树与查找关系密切，因为放到查找一章讲解
+
+### Huffman树(最优二叉树)的定义与应用
+#### Huffman树相关的概念
+1）路径：是指在一棵树中，从一个节点到另一个节点之间的分支构成的通路，如从节点8到节点1的路径如下图所示：
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/15325717690810.jpg)
+
+2）路径的长度：是指路径上的分支数目，在上图中，路径长度为2。
+
+3）树的路径长度：是指从根到每个结点的路径长度之和。
+
+4）带权路径长度：结点具有权值，从该结点到根之间的路径长度乘以结点的权值，就是该结点的带权路径长度。
+
+5）树的带权路径长度：是指树中所有**叶子节点**的带权路径之和。
+
+6 节点的权：指的是为树中的每一个节点赋予的一个非负的值，如上图中每一个节点中的值。
+
+有了如上的概念，对于**Huffman树，其定义**为：
+给定n权值作为n个叶子节点，构造一棵二叉树，若这棵二叉树的带权路径长度达到最小，则称这样的二叉树为最优二叉树，也称为Huffman树。
+
+#### Huffman树的构建
+给定n个权值，用这n个权值来构建赫夫曼树的算法描述如下：
+1）将这n个权值分别看成只有根节点的n棵二叉树，将这些二叉树的集合记为F。
+2）从F中选出两颗根结点的权值最小的树，作为左右子树，构建一棵新的二叉树，新的二叉树的根结点的权值为左右子结点的权值之和。
+3）从F中删去a,b，加入新构建的树C
+4）重复2，3步，直到F中只剩下一棵树为止，这棵树就是赫夫曼树。
+
+![alt](https://raw.githubusercontent.com/chuanshanjun/mess/master/DataStruct/15325743576122.jpg)
+
+对于树中节点的结构为：
+
+```c++
+struct huffman_node{
+        char c; // 字符
+        int weight; // 权重
+        char huffman_code[LEN]; // 路径长度?
+        huffman_node * left; // 左子树
+        huffman_node * right; //  右子树
+};
+```
+
+对于Huffman树的构建过程为：
+
+```c++
+int huffman_tree_create(huffman_node *&root, map<char, int> &word){
+        char line[MAX_LINE];
+        vector<huffman_node *> huffman_tree_node;
+
+        map<char, int>::iterator it_t;
+        for (it_t = word.begin(); it_t != word.end(); it_t++){
+                // 为每一个节点申请空间
+                huffman_node *node = (huffman_node *)malloc(sizeof(huffman_node));
+                node->c = it_t->first;
+                node->weight = it_t->second;
+                node->left = NULL;
+                node->right = NULL;
+                huffman_tree_node.push_back(node);
+        }
 
 
+        // 开始从叶节点开始构建Huffman树
+        while (huffman_tree_node.size() > 0){
+                // 按照weight升序排序
+                sort(huffman_tree_node.begin(), huffman_tree_node.end(), sort_by_weight);
+                // 取出前两个节点
+                if (huffman_tree_node.size() == 1){// 只有一个根结点
+                        root = huffman_tree_node[0];
+                        huffman_tree_node.erase(huffman_tree_node.begin());
+                }else{
+                        // 取出前两个
+                        huffman_node *node_1 = huffman_tree_node[0];
+                        huffman_node *node_2 = huffman_tree_node[1];
+                        // 删除
+                        huffman_tree_node.erase(huffman_tree_node.begin());
+                        huffman_tree_node.erase(huffman_tree_node.begin());
+                        // 生成新的节点
+                        huffman_node *node = (huffman_node *)malloc(sizeof(huffman_node));
+                        node->weight = node_1->weight + node_2->weight;
+                        (node_1->weight < node_2->weight)?(node->left=node_1,node->right=node_2):(node->left=node_2,node->right=node_1);
+                        huffman_tree_node.push_back(node);
+                }
+        }
+
+        return 0;
+}
+```
+
+#### Huffman树的特点
+1）权值越大的结点，距离根结点越近。
+
+2）树中没有度为1的结点，这类树又叫做正则（严格）二叉树。
+
+3）树的带权路径长度最短
+
+### Huffman树应用
+#### Huffman编码
+常见的.zip压缩文件和.jpeg图片文件的底层技术都用到了赫夫曼编码。
+
+例如字符串S=AAABBACCCDEEA
+
+| A   | B   | C   | D   | E  |
+| ------ | ------ | ------ | ------ | ------ |
+| 5次 | 2次 | 3次 | 1次 | 2次 |
+
+以出现的次数为权值，构建一个赫夫曼树，对每个结点的左右分支进行编号，左0右1，从根到每个结点的路径的数字序列即为每个字符的编码，对A~E的赫夫曼编码规则
+
+以出现的次数为权值，构建一个赫夫曼树，对每个结点的左右分支进行编号，左0右1，从根到每个结点的路径的数字序列即为每个字符的编码，对A~E的赫夫曼编码规则
+
+| A   | B   | C   | D   | E  |
+| ------ | ------ | ------ | ------ | ------ |
+| 0 | 110 | 10 | 1110 | 1111 |
+
+则H(S)=00011011001010101110111111110
+上述有赫夫曼树导出每个字符的编码，进而得到整个字符串的编码的过程称为赫夫曼编码。
+**在前缀码中，任一字符的编码串都不是另一字符编码串的前缀，赫夫曼编码产生的是最短前缀码**。
+
+### 赫夫曼n叉树
+赫夫曼二叉树是赫夫曼n叉树的一种特例，当对于结点数目大于等于2的待处理序列，都可以构造赫夫曼二叉树，但却不一定能构建赫夫曼n叉树，当无法构建时。需要补上权值为0的结点让整个序列凑成可以构造赫夫曼n叉树的序列。
+
+### 三、查找(search)
+#### 查找的基本概念
+查找的定义：给定一个K值，在含有N个记录的表中找出关键字等于K的记录。若找到，则查找成功，返回该记录的信息或者该记录在表中的位置；否则查找失败，返回相关的指示记录。
+由于查找算法的基本操作是关键字的比较，并且关键字比较次数与待查找关键字有关（对于一个查找表来说，对其中不同的关键字查找，关键字比较的次数一般不同），因此通常把查找过程中对关键字的平均比较次数作为衡量一个算法优劣的标准，平均查找长度用ASL来表示。
+
+#### 对线性关系结构的查找
+
+#### 顺序查找
+基本思路：从表的一端开始，顺序扫描线性表，一次将扫描到的关键字和给定的K值比较。
+顺序查找法对于顺序表和链表都是适用的，对于顺序表，可以通过数组下标递增来顺序扫描数组中的各个元素；对于链表，则可以通过表结点指针反复执行p=p->next来扫描表中的各个元素。
+```java
+int Search(int a[], int n ,int t){
+    int i;
+    for (int i = 1; i <=n; ++i) {
+        if(a[i]==k)
+            return i;
+        return 0;
+    }
+}
+```
+
+```java
+// 获得链表的第index(0-based)个位置的元素
+    // 在链表中不是一个常用的操作，练习用：）
+    public E get(int index){
+
+        if(index < 0 || index >= size)
+            throw new IllegalArgumentException("Get failed. Illegal index.");
+
+        Node cur = dummyHead.next;
+        for(int i = 0 ; i < index ; i ++)
+            cur = cur.next;
+        return cur.e;
+    }
+```
+
+#### 二分查找
+基本思路：
+
+&emsp; 1 首先确定整个查找区间的中间位置 mid = （ left + right ）/ 2
+
+&emsp; 2 用待查关键字值与中间位置的关键字值进行比较；
+
+&emsp; 若相等，则查找成功
+
+&emsp; 若大于，则在后（右）半个区域继续进行折半查找
+
+&emsp; 若小于，则在前（左）半个区域继续进行折半查找
+
+&emsp; 3 对确定的缩小区域再按折半公式，重复上述步骤。
+
+二分查找必须要求
+
+1.存储在数组中
+
+2.有序排列
+
+时间复杂度O(logn)
+
+### Hash查找法:(看书和复习手册)
+
+### BST树
+#### BST树定义及特性 略
+#### BST树 ADT
+```java
+public class BST<E extends Comparable<E>> {
+    // 根节点
+    private Node root;
+    // 树的容量
+    private int size;
+
+    private class Node {
+        public E e;
+        public Node left, right;
+
+        public Node(E e) {
+            this.e = e;
+            left = null;
+            right = null;
+        }
+    }
+
+    public BST(){
+        root = null;
+        size = 0;
+    }
+}
+```
+
+#### BST树查找
+```java
+// 看二分搜索树中是否包含元素e
+    public boolean contains(E e){
+        return contains(root, e);
+    }
+
+    // 看以node为根的二分搜索树中是否包含元素e, 递归算法
+    private boolean contains(Node node, E e){
+        // 查找不到返回false
+        if(node == null)
+            return false;
+        // 比较相等则返回true
+        if(e.compareTo(node.e) == 0)
+            return true;
+        // 如果比节点小则进入左子树    
+        else if(e.compareTo(node.e) < 0)
+            return contains(node.left, e);
+        else // e.compareTo(node.e) > 0
+            return contains(node.right, e);
+    }
+```
+
+#### BST树插入
+```java
+// 向以node为根的二分搜索树中插入元素e，递归算法
+    // 返回插入新节点后二分搜索树的根
+    private Node add(Node node, E e){
+        // node存在则插入成功
+        if(node == null){
+            size ++;
+            return new Node(e);
+        }
+        // 比节点小则转入左子树
+        if(e.compareTo(node.e) < 0)
+            node.left = add(node.left, e);
+        else if(e.compareTo(node.e) > 0)
+            node.right = add(node.right, e);
+
+        return node;
+    }
+```
+
+#### BST查找最小值也最大值
+```java
+// 一直查找最左端的点直到找不到为止
+// 寻找二分搜索树的最小元素
+    public E minimum(){
+        if(size == 0)
+            throw new IllegalArgumentException("BST is empty");
+
+        Node minNode = minimum(root);
+        return minNode.e;
+    }
+
+    // 返回以node为根的二分搜索树的最小值所在的节点
+    private Node minimum(Node node){
+        if( node.left == null )
+            return node;
+
+        return minimum(node.left);
+    }
+```
+
+#### BST树删除
+```java
+
+```
